@@ -1,19 +1,21 @@
 # osu! touchpad
 
-Ein Android-Handy als absolutes Grafiktablett für osu! auf Windows 11. Der erste Finger zielt auf dem PC-Monitor. Zum Tippen dienen die PC-Tastatur oder ein zweiter Finger. Alle Einstellungen liegen in der Windows-Tray-App.
+**English** · [Deutsch](README.de.md)
 
-## Bauen und starten
+Use an Android phone as an absolute-positioning tablet for osu! on Windows 11. Aim with one finger while looking at the PC monitor. Tap with the PC keyboard or a second finger on the phone. All settings are in the Windows system tray app.
 
-**Windows.** Öffne die [Visual-Studio-Lösung](windows/OsuTouchpad.sln) mit Visual Studio 2026 und der Workload **.NET-Desktopentwicklung**. Wähle `OsuTouchpad` als Startprojekt. Alternativ im Repo-Stamm mit dem .NET-10-SDK in PowerShell ausführen.
+## Build and run
+
+**Windows.** Open the solution in Visual Studio 2026 with the **.NET desktop development** workload installed. Set `OsuTouchpad` as the startup project. To build and run from PowerShell, use the .NET 10 SDK and run these commands from the repository root. [Visual Studio solution](windows/OsuTouchpad.sln)
 
 ```powershell
 dotnet build .\windows\OsuTouchpad.sln -c Release
 & '.\windows\OsuTouchpad\bin\Release\net10.0-windows\OsuTouchpad.exe'
 ```
 
-Das Fenster öffnet sich beim Start. Schließen legt es in den Infobereich. Ein Doppelklick auf das Tablettsymbol öffnet die Einstellungen erneut. Über **Beenden** im Kontextmenü schließt du den Empfänger. Zum Übertragen auf einen anderen Windows-PC den gesamten Ausgabeordner mitnehmen. Er benötigt die .NET-10-Desktop-Runtime.
+The settings window opens at startup. Closing it leaves the receiver running in the system tray. Double-click the tablet icon to reopen settings, or choose **Beenden** (Exit) from its context menu to stop the receiver. To run the app on another Windows PC, copy the entire output folder and install the .NET 10 Desktop Runtime.
 
-**Android.** Öffne den Ordner `android/` in Android Studio. Das Java-Projekt verwendet Android SDK Platform 34, Build Tools 36.0.0 und den mitgelieferten Gradle-Wrapper. Wähle das freigegebene Galaxy S23 und starte **Run 'app'**. Alternativ mit den Standardpfaden von Android Studio im Repo-Stamm bauen und installieren. Die App unterstützt Android ab 8.0 (API 26). [Kompatibilität des Android-Gradle-Plugins](https://developer.android.com/build/releases/agp-9-1-0-release-notes)
+**Android.** Open `android/` in Android Studio. The Java app uses Android SDK Platform 34, Build Tools 36.0.0 and the included Gradle wrapper. Select your authorized Galaxy S23 and choose **Run 'app'**. The app supports Android 8.0 (API 26) and later. To build and install from the repository root using Android Studio’s default Windows paths, run the commands below. [Android Gradle plugin compatibility](https://developer.android.com/build/releases/agp-9-1-0-release-notes)
 
 ```powershell
 $env:JAVA_HOME = Join-Path $env:ProgramFiles 'Android\Android Studio\jbr'
@@ -22,83 +24,83 @@ $env:ANDROID_HOME = Join-Path $env:LOCALAPPDATA 'Android\Sdk'
 & "$env:ANDROID_HOME\platform-tools\adb.exe" -d install -r .\android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
-Die installierbare Debug-APK liegt unter `android/app/build/outputs/apk/debug/app-debug.apk`. Öffne auf dem Handy **osu! touchpad**.
+The installable debug APK is at `android/app/build/outputs/apk/debug/app-debug.apk`. Once installed, open **osu! touchpad** on the phone.
 
-## Einmalige Einrichtung
+## First-time setup
 
 ### USB
 
-1. Auf dem S23 die Entwickleroptionen und **USB-Debugging** aktivieren. Das entsperrte Handy mit einem USB-Datenkabel anschließen und den RSA-Dialog für diesen PC bestätigen. [ADB und Gerätefreigabe](https://developer.android.com/tools/adb)
-2. In der Windows-App **USB** auswählen. Der Empfänger sucht ADB im Android-SDK und im `PATH`, erkennt das autorisierte Gerät und richtet `adb -s <Seriennummer> reverse tcp:27183 tcp:27183` ein.
-3. Die Handy-App verbindet sich über `127.0.0.1:27183`. Windows zeigt Gerätenamen und **Verbunden**. Auf dem Handy verschwinden die Statusmeldungen. Bei späteren Sitzungen genügen die geöffneten Apps und das Einstecken des Kabels.
+1. Enable Developer options and **USB debugging** on the S23. Unlock the phone, connect it with a USB data cable and accept the RSA authorization prompt for this PC. [ADB and device authorization](https://developer.android.com/tools/adb)
+2. Select **USB** in the Windows app. The receiver looks for ADB in the Android SDK and on `PATH`, detects the authorized phone and sets up `adb -s <serial> reverse tcp:27183 tcp:27183`.
+3. The phone connects to `127.0.0.1:27183`. Windows shows the device name and **Verbunden** (Connected). The status message disappears from the phone. For later sessions, open both apps and plug in the cable.
 
-Bleibt Windows bei der USB-Suche, im SDK Manager **Android SDK Platform-Tools** prüfen. Bei einem benutzerdefinierten SDK-Pfad `ANDROID_HOME` setzen oder `platform-tools` zum `PATH` hinzufügen und den Empfänger neu starten. Der Befehl `adb devices -l` zeigt das S23 nach erfolgreicher Freigabe als `device`.
+If Windows keeps searching, check that **Android SDK Platform-Tools** is installed in the SDK Manager. For a custom SDK location, set `ANDROID_HOME` or add `platform-tools` to `PATH`, then restart the receiver. Once authorized, the S23 should appear as `device` in the output of `adb devices -l`.
 
-### WLAN
+### Wi-Fi
 
-1. Am PC **WLAN** auswählen und der Windows-Firewall den Zugriff im **privaten Netzwerk** erlauben. Handy und PC brauchen dasselbe lokale IPv4-Broadcastnetz. Der PC kann per Ethernet am Router hängen.
-2. Beim ersten Verbinden die sechs Ziffern auf Handy und PC vergleichen. Stimmen sie überein, am PC **Koppeln** wählen. Der bekannte PC wird beim nächsten Start auch nach einer Änderung seiner IP-Adresse automatisch gefunden.
-3. Ohne Kabel sucht die Handy-App direkt im WLAN. Mit Kabel versucht sie zuerst ADB und sucht bei ausbleibender Antwort im WLAN weiter. Eine bestehende WLAN-Sitzung läuft beim Einstecken eines Ladekabels weiter.
+1. Select **WLAN** (Wi-Fi) on the PC. If Windows Firewall prompts you, allow access on **private networks**. The phone and PC must share the same local IPv4 broadcast network. The PC can connect to the router over Ethernet.
+2. On the first connection, compare the six-digit codes on the phone and PC. If they match, choose **Koppeln** (Pair) on the PC. The phone will find the paired PC automatically on later launches, even if its IP address changes.
+3. With the cable unplugged, the phone starts Wi-Fi discovery immediately. With a cable connected, it tries ADB first and falls back to Wi-Fi if the receiver does not respond. Plugging in a charging cable during an active Wi-Fi session keeps that session connected.
 
-| Zweck | Port am PC | Übertragung |
+| Purpose | PC port | Data |
 | --- | --- | --- |
-| USB | TCP 27183, nur Loopback | ADB Reverse, Positionen und Tasten in einem geordneten Datenstrom |
-| WLAN-Suche | UDP 27185 | IPv4-Broadcast mit Unicast-Antwort des PCs |
-| WLAN-Sitzung | TCP 27184 | TLS, Kopplung, Konfiguration, Beginn und Ende des Zielens, Tastenwechsel und Heartbeat |
-| WLAN-Bewegung | UDP 27184 | Absolute Position, Konfigurationsstand, Gestenphase, Sequenznummer und sitzungsgebundener HMAC |
+| USB | TCP 27183, loopback only | ADB reverse tunnel carrying positions and button events in one ordered stream |
+| Wi-Fi discovery | UDP 27185 | IPv4 broadcast request and a unicast reply from the PC |
+| Wi-Fi session | TCP 27184 | TLS connection for pairing, configuration, aim start and end, button presses and releases, and heartbeats |
+| Wi-Fi movement | UDP 27184 | Absolute position, configuration revision, gesture phase, sequence number and a session-specific HMAC |
 
-Bei ausbleibender WLAN-Erkennung die eingehenden Ports im privaten Firewallprofil und die Client-Isolation des Routers prüfen. Gastnetze trennen häufig WLAN-Geräte und Ethernet. Der Empfänger nimmt zu jedem Zeitpunkt eine Eingabesitzung über den gewählten Transport an.
+If discovery fails, check the inbound ports in the Windows Firewall private profile and the router’s client isolation setting. Guest networks often isolate Wi-Fi clients from Ethernet devices. The receiver accepts one active input session at a time over the selected transport.
 
-## Touchfläche und Ziel einstellen
+## Configure the touch area and target
 
-- Unter **Ziel & Eingabe** den Spielmonitor wählen. Für einen Ausschnitt **Gesamten Monitor verwenden** abwählen. Links und oben zählen in physischen Pixeln ab der linken oberen Ecke dieses Monitors. Windows berücksichtigt dessen Position und Skalierung im virtuellen Desktop.
-- Unter **Touchfläche** den roten Rahmen innen ziehen, an einer Kante strecken oder an einer Ecke in zwei Richtungen skalieren. Die vier Prozentfelder haben eine Auflösung von 0,01 %. Der Rahmen auf dem Handy und die Eingabe verwenden dieselben Koordinaten. Eine kleinere Fläche verkürzt den Fingerweg.
-- **1:1** erzeugt ein physisch quadratisches Feld auf dem Handy. Die anderen Formatknöpfe setzen gebräuchliche Verhältnisse. Breite und Höhe sind frei editierbar. **An Seitenverhältnis des Zielbereichs binden** hält beim Skalieren das tatsächliche Format des PC-Ziels. Die Vorschau übernimmt die Maße der verbundenen Android-Ansicht.
-- Unter **Taste für den zweiten Finger** stehen Links, Rechts, Mitte, Maustaste 4/5 und **Deaktiviert · PC-Tastatur** bereit. Die Voreinstellung ist die linke Maustaste. Ein Kontakt, der außerhalb des Rahmens beginnt, bleibt bis zum Abheben wirkungslos.
+- In **Ziel & Eingabe** (Target & input), select the monitor where you play. To map to a rectangle, clear **Gesamten Monitor verwenden** (Use entire monitor). Left and top are offsets in physical pixels from that monitor’s top-left corner. Windows accounts for the monitor’s position and scaling on the virtual desktop.
+- In **Touchfläche** (Touch area), drag inside the red frame to move it. Drag an edge to resize one dimension or a corner to resize both. The four percentage fields let you adjust the area in steps of 0.01%. The phone draws the frame and reads touches in the same coordinate system. A smaller area means less finger travel.
+- Choose **1:1** for a physical square on the phone, choose another aspect ratio preset or enter the width and height independently. Enable **An Seitenverhältnis des Zielbereichs binden** (Lock to target aspect ratio) to preserve the PC target’s proportions as you resize. The preview uses the dimensions of the connected phone’s touch surface.
+- Under **Taste für den zweiten Finger** (Second-finger button), choose the left, right or middle mouse button, mouse button 4 or 5, or **Deaktiviert · PC-Tastatur** (Disabled · PC keyboard). The default is the left mouse button. A touch that starts outside the frame is ignored until that finger lifts.
 
-Beim Ändern der Zuordnung endet eine laufende Geste. Hebe die Finger kurz ab und setze im neuen Rahmen wieder auf. Windows speichert die Einstellungen unter `%LOCALAPPDATA%\osu-touchpad\settings.json` und überträgt sie bei jeder Verbindung. Im selben Ordner liegen die lokale WLAN-Identität und die gekoppelten Geräte. Auf Android bleiben die Kopplungsdaten im privaten App-Speicher.
+Changing the mapping ends the current gesture. Lift your fingers and touch down again inside the new frame. Windows saves the settings in `%LOCALAPPDATA%\osu-touchpad\settings.json` and sends them to the phone on every connection. The same folder holds the receiver’s Wi-Fi identity and paired devices. Android keeps its pairing data in private app storage.
 
-## Manueller Abnahmetest
+## Manual acceptance test
 
-| Schritt | Erwartetes Ergebnis |
+| Step | Expected result |
 | --- | --- |
-| Auf dem 3440×1440-Monitor die vier Ecken und die Mitte der roten Fläche antippen. Auf einem zweiten Monitor und in einem versetzten Zielrechteck wiederholen, auch mit unterschiedlicher Windows-Skalierung. | Der Cursor trifft den entsprechenden Zielpunkt schon beim Aufsetzen. Beim Abheben bleibt er stehen. |
-| Rahmen verschieben, an Kante und Ecke skalieren, ein Prozentfeld ändern und **1:1** wählen. Anschließend die Formatsperre einschalten und eine Kante ziehen. | Der Handyrahmen folgt sofort. Die neue Grenze wirkt auch für Eingaben. Das Quadrat ist auf dem Handy gleich breit und hoch. Mit Sperre bleibt das Zielformat erhalten. |
-| Außerhalb beginnen und hineinziehen. Dann innen neu ansetzen und über den Rand hinausziehen. | Der erste Kontakt bleibt wirkungslos. Der innen begonnene Kontakt zielt ohne Klick und endet am Rand des PC-Ziels. |
-| Bei aktivierter linker Taste den zweiten Finger kurz aufsetzen. Danach länger halten, mit dem ersten Finger ziehen und beide Abhebereihenfolgen testen. Einen dritten Finger hinzunehmen. | Ein kurzer Tap löst genau einen Klick aus. Beim Halten bleibt die Taste bis zum ersten Abheben gedrückt. Der dritte Finger erzeugt keinen weiteren Klick. Der verbleibende Zielfinger kann weiterfahren, der verbleibende zweite Finger übernimmt den Cursor nicht. |
-| Während des Haltens Android in den Hintergrund schicken, das USB-Kabel ziehen, das WLAN unterbrechen oder am PC den Transport wechseln. Danach beide Apps neu starten. | Die Taste wird freigegeben, bei einem stillen Verbindungsverlust nach rund drei Sekunden. Transport, Area, Monitor, Ausschnitt und Taste bleiben gespeichert. Das bekannte Gerät verbindet sich erneut. |
-| Ohne Kabel über WLAN verbinden. Ein Ladekabel einstecken. Anschließend am PC **USB** wählen und ein Datenkabel anschließen. | WLAN bleibt beim Laden aktiv. Beim Umschalten endet die alte Sitzung. Mit freigegebenem ADB stellt sich die USB-Verbindung automatisch her. |
-| In osu! zunächst **Empfindlichkeit 1×** und **Raw Input aus** setzen. Für die Fingergeste Maustasten im Spiel zulassen. Kreise antippen und bei einem Slider halten. Danach die Geste in der Tray-App deaktivieren und über die PC-Tastatur spielen. | Zielen, kurzer Klick und Halten funktionieren im Spiel. Im Tastaturmodus übernimmt das Handy ausschließlich das Zielen. |
+| With the 3440×1440 monitor selected, touch the four corners and the center of the red area. Repeat on a second monitor and with an offset target rectangle. Also try different Windows display scales. | The cursor lands on the corresponding target point as soon as the finger touches down. It stays in place when the finger lifts. |
+| Move the frame, drag an edge and a corner, edit a percentage field and select **1:1**. Then enable the aspect ratio lock and drag an edge. | The frame on the phone updates immediately and the new boundary applies to input. The square is as wide as it is tall on the phone. With the lock enabled, resizing preserves the target’s proportions. |
+| Start outside the frame and drag into it. Lift, start inside and drag beyond the edge. | The first touch has no effect. The second aims without clicking, and the cursor stops at the edge of the PC target. |
+| Select the left mouse button. Aim with one finger and briefly tap with a second. Repeat with the second finger held down while moving the first. Try lifting the fingers in both orders and adding a third finger. | A quick tap produces one click. During a hold, the button releases as soon as either finger lifts. A third finger adds no clicks. If the aiming finger remains, it continues aiming. If it lifts first, the cursor stays in place. |
+| While holding the button, try putting the app in the background on Android, unplugging USB, interrupting Wi-Fi and switching transports on the PC. Then restart both apps. | The button releases, including after about three seconds if the connection goes silent. The transport, touch area, monitor, target rectangle and button binding persist. The paired device reconnects. |
+| Connect over Wi-Fi with the cable unplugged. Plug in a charging cable. Then select **USB** on the PC and connect a data cable. | Wi-Fi stays connected while charging. Switching transports ends the old session. With ADB authorized, the USB session starts automatically. |
+| In osu!, start with **Sensitivity 1×** and **Raw input off**. Enable mouse buttons during gameplay for the two-finger gesture. Tap a circle and hold through a slider. Then disable the gesture in the tray app and play using the PC keyboard. | Aiming, tapping and holding work in-game. In keyboard mode the phone handles aiming and the keyboard handles taps. |
 
-Starte osu! und Empfänger in derselben normalen Benutzersitzung. Windows berücksichtigt bei `SendInput` die Berechtigungsstufen beider Prozesse. [osu!-Eingabeeinstellungen](https://osu.ppy.sh/wiki/en/Client/Options#mouse) · [Microsoft zu SendInput](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput)
+Run osu! and the receiver in the same standard Windows user session. Windows checks the privilege levels of both processes when handling `SendInput`. [osu! input settings](https://osu.ppy.sh/wiki/en/Client/Options#mouse) · [Microsoft SendInput documentation](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput)
 
-## Prüfstand vom 19. November 2026
+## Verification on November 19, 2026
 
-| Tatsächlich ausgeführt | Ergebnis |
+| Check performed | Result |
 | --- | --- |
-| Windows-Release mit Visual Studio/MSBuild und .NET-10-SDK | Tray-App und Testprogramm gebaut. |
-| Android-Debug-Build, APK-Signatur, fünf JVM-Gestentests und Android Lint | APK gebaut, v2-Signatur gültig, fünf Tests bestanden. Lint meldet 0 Fehler und 6 Hinweise zu SDK-/Gradle-Versionen, Querformat, Zertifikatsprüfung und der Touchansicht. |
-| Java-Sitzungscode der App gegen den C#-Empfänger über lokale TCP-/UDP-Sockets | Erster Kontakt, schneller Klick, Halten, Live-Konfiguration, Codevergleich, gespeicherte Kopplung, Socket-Abbruch und Heartbeat-Verlust geprüft. Tastenereignisse wurden aufgezeichnet. |
-| Isolierte Windows-Eingabe- und Geometrietests | Vertauschte Paket-Reihenfolge, veraltete Positionen, Abbruch, Tastaturmodus, negativer Desktopursprung, Ränder, Quadrat und gespeicherte Einstellungen geprüft. |
-| Reguläre Listener und Transportwahl | Zweite gleichzeitige Sitzung abgewiesen. Wechsel USB → WLAN → USB während eines gehaltenen Klicks mit Freigabe bestanden. |
-| WinForms-Oberfläche | Fensterstart, Verschieben in der Vorschau, Quadrat, Monitorwahl, numerischer Ausschnitt, Schließen ins Tray und Speichern geprüft. |
-| Echtes Windows-`SendInput` mit anschließendem Auslesen der Cursorposition | Auf drei Monitoren alle 15 Punkte pixelgenau getroffen. 3440×1440 bei (0, 0), 1920×1080 bei (−1920, 361) und 1920×1080 bei (3440, 361). Alle drei liefen bei 100 % Skalierung. |
+| Windows Release build with Visual Studio/MSBuild and the .NET 10 SDK | Built the tray app and test executable. |
+| Android debug build, APK signature, five JVM gesture tests and Android Lint | Built the APK and verified its v2 signature. All five tests passed. Lint reported 0 errors and 6 warnings about SDK and Gradle versions, landscape orientation, certificate validation and the touch view. |
+| The app’s Java session code against the C# receiver over local TCP and UDP sockets | Verified initial touch, quick tap, hold, live configuration, pairing code comparison, saved pairing, socket disconnect and heartbeat loss. Mouse button events were recorded. |
+| Isolated Windows input and geometry tests | Verified out-of-order packets, stale positions, cancellation, keyboard mode, a negative desktop origin, edge mapping, a square touch area and saved settings. |
+| Production listeners and transport selection | The receiver rejected a second simultaneous session. Switching USB → Wi-Fi → USB during a held click released the button. |
+| WinForms interface | Verified window startup, dragging the preview area, the square preset, monitor selection, numeric target bounds, closing to the system tray and saving settings. |
+| Windows `SendInput` with cursor position readback | Hit all 15 target points to the pixel across three monitors. The 3440×1440 display was at (0, 0), with 1920×1080 displays at (−1920, 361) and (3440, 361). All three used 100% scaling. |
 
-**Am Gerät offen** sind der komplette Weg vom Finger auf dem Galaxy S23 über ein echtes USB-Kabel bzw. den Heimrouter, Abziehen und Wiedereinstecken, unterschiedliche DPI-Skalierungen sowie Zielen, Halten und Latenz in osu!. Beim Prüflauf meldete ADB kein angeschlossenes Gerät.
+**Hardware coverage.** ADB reported no attached device during this run. The full path from a finger on the Galaxy S23 through a physical USB cable or home router, unplugging and reconnecting the cable, mixed display scaling, and aiming, holding and latency in osu! remained to be tested on hardware.
 
-Die wiederholbaren Tests laufen im Repo-Stamm mit folgenden Befehlen. Der Java/C#-Test verwendet das JDK aus `JAVA_HOME`, Android Studio oder dem `PATH`. Für `--transports` die Tray-App vorher beenden, damit ihre Ports für den Test frei sind. Ohne diesen Schalter genügen freie lokale Testports.
+To repeat the tests, run the commands below from the repository root. The Java/C# test uses the JDK from `JAVA_HOME`, Android Studio or `PATH`. Close the tray app before running with `--transports` to free its listener ports. Omitting that switch runs the checks on available local test ports.
 
 ```powershell
 .\android\gradlew.bat -p android :app:testDebugUnitTest :app:lintDebug
 dotnet run --project .\windows\OsuTouchpad.Tests -c Release -- --transports
 ```
 
-## Hintergrund austauschen
+## Replace the background
 
-Das für dieses Projekt mit ImageGen erzeugte Panoramabild wird auf dem Handy und in der Windows-Vorschau zusätzlich gedimmt. Zum Austauschen die PNG ersetzen und beide Apps neu bauen. [Hintergrunddatei](android/app/src/main/res/drawable-nodpi/playfield.png)
+The phone and the Windows preview both dim the panorama generated for this project with ImageGen. To use your own background, replace the PNG and rebuild both apps. [Background image](android/app/src/main/res/drawable-nodpi/playfield.png)
 
 <details>
-<summary>Bildprompt</summary>
+<summary>Image prompt</summary>
 
 ```text
 Use case: stylized-concept. An original ultrawide 20:9 landscape wallpaper for a dimmed rhythm game touch tablet, atmospheric anime background painting. A still volcanic lake below layered, sharply silhouetted alpine ridges at blue hour, a slim crescent and a few stars in a deep indigo-to-dusty-mauve sky, one subtle long pink meteor above the horizon. Restrained dusk light, rich plum shadows, delicate reflections, clean painterly shapes. Compose quiet dark negative space across the center so a bright red touch-area frame can be overlaid in the app. Edge-to-edge landscape illustration. No interface, no frame, no lettering, no logo, no characters.
