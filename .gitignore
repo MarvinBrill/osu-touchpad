@@ -1,0 +1,9 @@
+.vs/
+.idea/
+*.user
+**/bin/
+**/obj/
+**/.gradle/
+**/build/
+android/local.properties
+*.iml
